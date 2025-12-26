@@ -28,7 +28,7 @@ class ActorSerializer(serializers.ModelSerializer):
 
 class CinemaHallSerializer(serializers.ModelSerializer):
     capacity = serializers.IntegerField(
-        source="cinema_hall.capacity",
+        read_only=True
     )
 
     class Meta:
