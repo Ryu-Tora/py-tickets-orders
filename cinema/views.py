@@ -74,19 +74,18 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
 
         if self.action == "list":
+            tickets_available = (
+                    F("cinema_hall__rows")
+                    * F("cinema_hall__seats_in_row")
+                    - Count("tickets")
+            )
+
             queryset = (
-                queryset.select_related("movie").annotate(
-                    tickets_available=(
-                        F(
-                            "cinema_hall__rows"
-                        ) * F(
-                        "cinema_hall__seats_in_row"
-                    ) - Count(
-                        "tickets"
-                    )
-                    )
-                )
-            ).order_by("id")
+                queryset
+                .select_related("movie", "cinema_hall")
+                .annotate(tickets_available=tickets_available)
+                .order_by("id")
+            )
             return queryset
 
         date = self.request.GET.get("date")
