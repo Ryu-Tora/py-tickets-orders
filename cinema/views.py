@@ -123,7 +123,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
 
-
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
 
