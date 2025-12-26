@@ -1,7 +1,14 @@
 from django.db.models import Count, F
 from rest_framework import viewsets
 
-from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from cinema.models import (
+    Genre,
+    Actor,
+    CinemaHall,
+    Movie,
+    MovieSession,
+    Order
+)
 
 from cinema.serializers import (
     GenreSerializer,
@@ -14,6 +21,7 @@ from cinema.serializers import (
     MovieSessionDetailSerializer,
     MovieListSerializer,
     OrderSerializer,
+    OrderListSerializer,
 )
 
 
@@ -89,10 +97,10 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             return queryset
 
         date = self.request.GET.get("date")
-        movie = self.request.GET.get("movie_title")
+        movie = self.request.GET.get("movie")
 
         if date:
-            queryset = queryset.filter(show_time__icontains=date)
+            queryset = queryset.filter(show_time__date=date)
         if movie:
             movie_ids = [int(id_) for id_ in movie.split(",")]
             queryset = queryset.filter(movie_id__in=movie_ids)
@@ -118,3 +126,8 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return OrderListSerializer
+        return OrderSerializer

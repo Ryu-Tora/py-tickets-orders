@@ -135,3 +135,11 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket in tickets_data:
                 Ticket.objects.create(order=order, **ticket)
             return order
+
+
+class OrderListSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ("id", "created_at", "tickets")
